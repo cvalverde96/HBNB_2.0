@@ -4,17 +4,33 @@ import uuid
 from datetime import datetime
 from app import db
 
+
 class BaseModel(db.Model):
     __abstract__ = True
-    
+
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
-    def update(self, **kwargs):
-        for key, value in kwargs.items():
+
+    def __init__(self):
+        if not hasattr(self, 'id'):
+            self.id = str(uuid.uuid4())
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
+
+    def save(self):
+        self.updated_at = datetime.now()
+
+    def update(self, data):
+        for key, value in data.items():
             if hasattr(self, key):
                 setattr(self, key, value)
+        self.save()
 
-    def __str__(self):
-        return (f"BaseModel(id={self.id}, created_at={self.created_at}, updated_at={self.updated_at})")
+    def to_dict(self):
+        result = self.__dict__.copy()
+        if 'created_at' in result:
+            result['created_at'] = result['created_at'].isoformat()
+        if 'updated_at' in result:
+            result['updated_at'] = result['updated_at'].isoformat()
+        return result
