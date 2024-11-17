@@ -1,25 +1,20 @@
 from app.models.base import BaseModel
 from app import db
 
+
 class Amenity(BaseModel):
-    __tablename__ = 'amenities'
-    
-    name = db.Column(db.String(50), nullable=False)
-    
-    def __init__(self, name: str):
+    __tablename__ = 'amenity'
+
+    __table_args__ = {'extend_existing': True}
+
+    name = db.Column(db.String(100), nullable=False)
+
+    def __init__(self, name):
         super().__init__()
-        self.name = self.validate_name(name)
-    
-    @staticmethod
-    def validate_name(name: str) -> str:
-        if not name or len(name) > 50:
-            raise ValueError("Name is required and should be less than or equal to 50 characters.")
-        return name
+        self.name = name
 
-    def update(self, **kwargs):
-        super().update(**kwargs)
-        self.updated_timestamp()
+        self.amenity_validation()
 
-    def __str__(self):
-        return (f"Amenity(id={self.id}, name={self.name}, "
-                f"created_at={self.created_at}, updated_at={self.updated_at})")
+    def amenity_validation(self):
+        if not self.name or len(self.name) > 50:
+            raise ValueError("Amenity name must be less than 50 characters")
