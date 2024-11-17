@@ -2,79 +2,52 @@
 
 from app.models.base import BaseModel
 from app.models.user import User
+from app import db
 
 
 class Place(BaseModel):
-    def __init__(self, title: str, price: float, latitude: float, longitude: float, owner: "User", description: str = None):
-        super().__init__()
-        self.title = self.validate_title(title)
-        self.description = description
-        self.price = self.validate_price(price)
-        self.latitude = self.validate_latitude(latitude)
-        self.longitude = self.validate_longitude(longitude)
-        self.owner = self.validate_owner(owner)
-        self.owner_id = self.owner.id
-        self.reviews = []
-        self.amenities = []
-    
-    @staticmethod
-    def validate_title(title: str) -> str:
-        if not title or len(title) > 100:
-            raise ValueError("Title is required and/or should be less than or equal to 100 characters.")
-        return (title)
-    
-    @staticmethod
-    def validate_price(price: float) -> float:
-        if price <= 0:
-            raise ValueError("Price must be a positive value.")
-        return (price)
-    
-    @staticmethod
-    def validate_latitude(latitude: float) -> float:
-        if not (-90.0 <= latitude <= 90.0):
-            raise ValueError("Latitude must be within the range of -90.0 to 90.0.")
-        return (latitude)
-    
-    @staticmethod
-    def validate_longitude(longitude: float) -> float:
-        if not (-180.0 <= longitude <= 180.0):
-            raise ValueError("Longitude must be within the range of -180.0 to 180.0.")
-        return (longitude)
-    
-    @staticmethod
-    def validate_owner(owner: "User") -> "User":
-        if not isinstance(owner, User):
-            raise ValueError("Owner must be a valid User instance.")
-        return (owner)
-    
-    
-    def add_review(self, review):
-        from app.models.review import Review
-        if isinstance(review, Review): 
-            self.reviews.append(review)
-        else:
-            raise ValueError("Invalid review object")
-    
-    def update(self, title: str = None, price: float = None, latitude: float = None, longitude: float = None, description: str = None, owner: "User" = None):
-        if title:
-            self.title = self.validate_title(title)
-        if price:
-            self.price = self.validate_price(price)
-        if latitude:
-            self.latitude = self.validate_latitude(latitude)
-        if longitude:
-            self.longitude = self.validate_longitude(longitude)
-        if description:
-            self.description = description
-        if owner:
-            self.owner = self.validate_owner(owner)
-        super().update()
-    
-    
-        def __str__(self):
-            return (f"Place(id={self.id}, title={self.title}, description={self.description}, "
-                f"price={self.price}, latitude={self.latitude}, longitude={self.longitude}, "
-                f"owner={self.owner.first_name} {self.owner.last_name}, created_at={self.created_at}, updated_at={self.updated_at})")
+    __tablename__ = 'place'
+    __table_args__ = {'extend_existing': True}
 
-        
-        
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String, nullable=True)
+    price = db.Column(db.Float, nullable=False)
+    latitude = db.Column(db.Float, nullable=True)
+    longitude = db.Column(db.Float, nullable=True)
+    owner_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)
+
+    def __init__(self, title, description, price, latitude, longitude, owner_id):
+        super().__init__()
+        self.title = title
+        self.description = description
+        self.price = price
+        self.latitude = latitude
+        self.longitude = longitude
+        self.owner_id = owner_id
+
+        self.validations()
+
+    def validations(self):
+
+        user = db.session.query(User).filter_by(id=self.owner_id).first()
+        if not user:
+            raise ValueError('Owner must be a valid User')
+
+        if not self.title or len(self.title) > 100:
+            raise ValueError('Maximum length of 100 characters')
+
+        if self.price < 1:
+            raise ValueError('Price must be greater than 0')
+
+        if not (-90.0 <= self.latitude <= 90.0):
+            raise ValueError('Latitude must be between -90 and 90')
+        if not (-180.0 <= self.longitude <= 180.0):
+            raise ValueError('Longitude must be between -180 and 180')
+
+    def add_review(self, review):
+
+        self.reviews.append(review)
+
+    def add_amenity(self, amenity):
+
+        self.amenities.append(amenity)
