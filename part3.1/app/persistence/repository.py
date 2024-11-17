@@ -3,6 +3,7 @@
 from abc import ABC, abstractmethod
 from app import db
 
+
 class Repository(ABC):
     @abstractmethod
     def add(self, obj):
@@ -45,9 +46,7 @@ class InMemoryRepository(Repository):
     def update(self, obj_id, data):
         obj = self.get(obj_id)
         if obj:
-            for key, value in data.__dict__.items():
-                if hasattr(obj, key):
-                    setattr(obj, key, value)
+            obj.update(data)
 
     def delete(self, obj_id):
         if obj_id in self._storage:
