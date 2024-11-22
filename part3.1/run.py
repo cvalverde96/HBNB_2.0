@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import os
 import sqlite3
-from app import create_app, db
+from app import create_app
 
 
 def execute_script(db_path, script_path):
@@ -16,9 +16,9 @@ def execute_script(db_path, script_path):
 
 def initialize_database():
     base_dir = os.path.dirname(__file__)
-    db_path = os.path.join(base_dir, "app", "persistence", "development.db")
+    db_path = os.path.join(base_dir, "instance", "development.db")
     scripts_path = os.path.join(base_dir, "app", "persistence", "scripts.sql")
-    seed_path = os.path.join(base_dir, "app", "persistence", "seed.sql")
+    seed_path = os.path.join(base_dir, "app", "persistence", "seeds.sql")
 
     if not os.path.exists(os.path.join(base_dir, "app", "persistence")):
         print("Error: The 'persistence' folder does not exist.")
