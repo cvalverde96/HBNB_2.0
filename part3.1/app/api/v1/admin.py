@@ -60,7 +60,6 @@ class AdminUserResource(Resource):
         email = user_data.get('email')
 
         if email:
-
             existing_user = facade.get_user_by_email(email)
             if existing_user and existing_user.id != user_id:
                 return {'error': 'Email is already in use'}, 400
@@ -76,11 +75,9 @@ class AdminUserResource(Resource):
 
 @api.route('/amenities/')
 class AdminAmenityCreate(Resource):
-
     @api.response(201, 'Amenity successfully created')
     @api.response(400, 'Invalid input data')
     def post(self):
-
         try:
             new_amenity = facade.create_amenity(request.json)
             return {
