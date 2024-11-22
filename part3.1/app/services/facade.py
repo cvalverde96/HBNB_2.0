@@ -15,6 +15,7 @@ from app.models.placeamenity import PlaceAmenity
 
 
 class HBnBFacade:
+    # User
     def __init__(self):
         self.user_repo = UserRepository()
         self.place_repo = PlaceRepository()
@@ -24,7 +25,6 @@ class HBnBFacade:
 
     def create_user(self, user_data):
         user = User(**user_data)
-        user.hash_password(user.password)
         self.user_repo.add(user)
         return user
 
@@ -45,6 +45,8 @@ class HBnBFacade:
             setattr(user, key, value)
         self.user_repo.update(user.id, user_data)
         return user
+
+    #  Amenity
 
     def create_amenity(self, amenity_data):
         amenity = Amenity(**amenity_data)
@@ -72,6 +74,8 @@ class HBnBFacade:
 
         self.amenity_repo.update(amenity.id, amenity_data)
         return amenity
+
+    # Place
 
     def create_place(self, place_data):
         owner_id = place_data.pop('owner_id', None)
@@ -111,6 +115,8 @@ class HBnBFacade:
 
         self.place_repo.update(place_id, place_data)
         return place
+
+    # Review
 
     def create_review(self, review_data):
         place = self.place_repo.get(review_data['place_id'])
