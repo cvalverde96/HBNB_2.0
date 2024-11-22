@@ -33,9 +33,21 @@ class User(BaseModel):
 
     def hash_password(self, password):
         self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+        print(bcrypt.check_password_hash(self.password, password))
 
     def verify_password(self, password):
-        return bcrypt.check_password_hash(self.password, password)
+        print(f"Input password: {password}")
+        print(f"Stored hash: {self.password}")
+        print(f"Hash length: {len(self.password)}")
+        print(f"Hash matches bcrypt format: {self.password.startswith('$2b$')}")
+
+        result1 = bcrypt.check_password_hash(self.password, password)
+        result2 = bcrypt.check_password_hash(self.password.encode('utf-8'), password)
+
+        print(f"Check result (normal): {result1}")
+        print(f"Check result (encoded): {result2}")
+
+        return result1
 
     def update(self, first_name: str = None, last_name: str = None, email: str = None, is_admin: bool = None):
         if first_name:
