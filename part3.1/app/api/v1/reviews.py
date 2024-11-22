@@ -28,16 +28,16 @@ class ReviewList(Resource):
         if not place:
             return 'Error Not Found', 404
 
-        if place.owner_id == current_user.get("id"):
+        if place.owner_id == current_user:
             return 'You cannot review your own place.', 400
 
         review = facade.get_reviews_by_place(review_data['place_id'])
         for review in review:
-            if review.user_id == current_user.get("id"):
+            if review.user_id == current_user:
                 return 'You have already reviewed this place..', 400
 
         try:
-            review_data['user_id'] = current_user.get("id")
+            review_data['user_id'] = current_user
             new_review = facade.create_review(review_data)
 
             review_data = {
@@ -108,7 +108,7 @@ class ReviewResource(Resource):
 
         review = facade.get_review(review_id)
 
-        if review.user_id != current_user.get("id"):
+        if review.user_id != current_user:
             return {'error': 'Unauthorized action.'}, 403
 
         try:
@@ -136,7 +136,7 @@ class ReviewResource(Resource):
         current_user = get_jwt_identity()
         review = facade.get_review(review_id)
 
-        if review.user_id != current_user.get("id"):
+        if review.user_id != current_user:
             return {'error': 'Unauthorized action.'}, 403
 
         try:
