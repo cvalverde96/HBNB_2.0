@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from flask_restx import Namespace, Resource, fields
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services import facade
 
 api = Namespace('users', description='User operations')
@@ -40,7 +40,8 @@ class UserList(Resource):
                 'first_name': new_user.first_name,
                 'last_name': new_user.last_name,
                 'email': new_user.email,
-                'is_admin': new_user.is_admin}, 201
+                'is_admin': new_user.is_admin,
+                'password': new_user.password}, 201
 
 
 @api.route('/<user_id>')
@@ -73,7 +74,9 @@ class UserResource(Resource):
     @api.response(404, 'User not found')
     def put(self, user_id):
         current_user = get_jwt_identity()
-        if current_user.get("id") != user_id:
+        claims = get_jwt()
+
+        if current_user != user_id and not claims.get("is_admin"):
             return {'error': 'Unauthorized action.'}, 401
 
         user_data = api.payload
