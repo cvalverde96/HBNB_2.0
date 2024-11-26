@@ -14,7 +14,7 @@ body {
   margin: 0;
   background-color: #edf6f9;
   color: #343a40;
-  font-family: 'Dancing Script', Arial, sans-serif;
+  font-family: 'Dancing Script', Arial, sans-serif; /* style para que sea en cursivo */
 }
 
 header {
@@ -43,6 +43,7 @@ main {
   border-radius: 10px;
 }
 
+/* style para que sea en cursivo */
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Dancing Script', Arial, sans-serif;
   font-weight: 500;
