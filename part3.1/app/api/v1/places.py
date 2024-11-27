@@ -46,7 +46,7 @@ create_place_model = api.model('PlaceCreate', {
 })
 
 
-@api.route('/')
+@api.route('/', strict_slashes=False)
 class PlaceList(Resource):
     @jwt_required()
     @api.expect(create_place_model)
