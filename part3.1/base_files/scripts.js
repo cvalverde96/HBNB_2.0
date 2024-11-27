@@ -262,7 +262,7 @@ function initializeReviewForm(token, placeId) {
 
 async function submitReview(token, placeId, reviewText, rating) {
     try {
-        const response = await fetch(`http://127.0.0.1:5050/api/v1/places/${placeId}/reviews`, {
+        const response = await fetch('http://127.0.0.1:5050/api/v1/reviews/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -270,7 +270,9 @@ async function submitReview(token, placeId, reviewText, rating) {
             },
             body: JSON.stringify({
                 text: reviewText,
-                rating: parseInt(rating, 10)
+                rating: parseInt(rating, 10),
+                user_id: getCookie('user_id'), // Or pass the user_id from wherever it's stored
+                place_id: placeId
             })
         });
 
