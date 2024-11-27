@@ -145,7 +145,9 @@ class HBnBFacade:
         return self.review_repo.get_all()
 
     def get_reviews_by_place(self, place_id):
+        print(f"Fetching reviews for place_id: {place_id}")
         reviews = self.review_repo.get_by_attribute('place_id', place_id)
+        print(f"Found reviews: {reviews}")
         return [reviews] if isinstance(reviews, Review) else reviews if reviews else []
 
     def update_review(self, review_id, review_data):
