@@ -201,7 +201,7 @@ function displayPlaceDetails(place) {
 async function fetchReviews(placeId) {
     console.log(`Fetching reviews for place_id: ${placeId}`);
     try {
-        const response = await fetch(`http://127.0.0.1:5050/api/v1/places/${placeId}/reviews`);
+        const response = await fetch(`http://127.0.0.1:5050/api/v1/reviews/places/${placeId}/reviews`);
         if (!response.ok) throw new Error('Failed to fetch reviews');
         const reviews = await response.json();
         console.log('Fetched reviews:', reviews);
